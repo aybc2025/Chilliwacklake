@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>אגם צ’יליווק – משחקים ומידע לילדים</title>
+  <meta name="theme-color" content="#22c55e" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-512.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>🧭 אגם צ’יליווק – Sx̱ótsaqel</h1>
+    <button id="installBtn" class="primary small" hidden>התקנה לטלפון</button>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="תפריט תוכן">
+      <button role="tab" aria-selected="true" class="tab active" data-tab="home">דף הבית</button>
+      <button role="tab" class="tab" data-tab="loops">לולאות & חוף</button>
+      <button role="tab" class="tab" data-tab="pack">משחק אריזה</button>
+      <button role="tab" class="tab" data-tab="quiz">חידון בטיחות</button>
+      <button role="tab" class="tab" data-tab="weather">מזג‑אוויר & רוח</button>
+      <button role="tab" class="tab" data-tab="plan">מתכנן יום</button>
+      <button role="tab" class="tab" data-tab="stickers">מדבקות</button>
+    </nav>
+
+    <section id="home" class="panel show">
+      <div class="card hero">
+        <h2>ברוכים הבאים! 🌲🏕️</h2>
+        <p>זהו אתר משחקים ומידע בעברית לילדים על פארק Sx̱ótsaqel / Chilliwack Lake.</p>
+        <ul class="bullets">
+          <li>נלמד איפה כדאי לישון – <strong>פלורה? ראדיום? פלייפייס?</strong></li>
+          <li>נשחק <strong>משחק אריזה</strong> – מה חשוב להביא?</li>
+          <li>נעשה <strong>חידון בטיחות</strong> קצר</li>
+          <li>ונחקור איך <strong>הרוח משתנה במשך היום</strong> ⛵</li>
+        </ul>
+        <p class="note">אין קליטה סלולרית בפארק – מתכוננים מראש 🙂</p>
+      </div>
+
+      <div class="facts">
+        <h3>עובדות מהירות</h3>
+        <ul id="factsList" class="checklist"></ul>
+      </div>
+    </section>
+
+    <section id="loops" class="panel">
+      <h2>היכרות עם הלולאות 🗺️</h2>
+      <div id="loopsGrid" class="grid"></div>
+      <details class="hint"><summary>טיפ להורים</summary>פלייפייס קרובה לחוף אך עמוסה; פלורה/ראדיום שקטות ופרטיות יותר; לינדמן/גרינדרופ קרובות למגרש המשחקים.</details>
+    </section>
+
+    <section id="pack" class="panel">
+      <h2>🎒 משחק אריזה</h2>
+      <p>גררו פריטים אל ה<span class="droplabel">תיק</span>. דברים טובים = נקודות, דברים לא מתאימים = מינוס!</p>
+      <div class="pack-wrap">
+        <ul id="packItems" class="items" aria-label="פריטים לגרירה"></ul>
+        <div id="dropZone" class="drop" aria-label="איזור התיק" tabindex="0">התיק שלי</div>
+      </div>
+      <div class="scorebar">נקודות: <span id="score">0</span></div>
+    </section>
+
+    <section id="quiz" class="panel">
+      <h2>❓ חידון בטיחות</h2>
+      <div id="quizBox" class="quiz"></div>
+      <button id="nextQ" class="primary">שאלה הבאה</button>
+    </section>
+
+    <section id="weather" class="panel">
+      <h2>🌤️ איך הרוח משתנה?</h2>
+      <p>גררו את השעות וראו איך ה״גלים״ משתנים. <strong>אחר הצהריים</strong> לרוב יש יותר רוח.</p>
+      <label>שעה: <input id="timeSlider" type="range" min="6" max="20" value="10"> <span id="timeVal">10:00</span></label>
+      <div class="lake">
+        <div class="boat" aria-hidden="true">🛶</div>
+        <div class="waves"></div>
+      </div>
+    </section>
+
+    <section id="plan" class="panel">
+      <h2>📅 מתכנן יום קצר</h2>
+      <p>בחרו פעילות לבוקר, צהריים וערב. בסוף תקבלו <strong>תוכנית יום</strong> ידידותית לילדים.</p>
+      <div class="plan-grid">
+        <div>
+          <h3>בוקר</h3>
+          <select id="morning">
+            <option>חוף ומשחקי חול</option>
+            <option>מסלול לינדמן (קצר)</option>
+            <option>סיבוב אופניים בלולאה</option>
+          </select>
+        </div>
+        <div>
+          <h3>צהריים</h3>
+          <select id="noon">
+            <option>פיקניק מוצל</option>
+            <option>שייט קרוב לחוף (למי שמנוסה)</option>
+            <option>מגרש משחקים</option>
+          </select>
+        </div>
+        <div>
+          <h3>ערב</h3>
+          <select id="eve">
+            <option>תצפית כוכבים</option>
+            <option>טיול קצר על שביל החוף</option>
+            <option>סיפור ליד “מדורת” גז</option>
+          </select>
+        </div>
+      </div>
+      <button id="makePlan" class="primary">בנו תוכנית</button>
+      <pre id="planOut" class="plan-out" aria-live="polite"></pre>
+    </section>
+
+    <section id="stickers" class="panel">
+      <h2>🏅 מדבקות הישגים</h2>
+      <p>הרוויחו מדבקות בלמידה ובמשחקים. ההתקדמות נשמרת במכשיר.</p>
+      <ul id="stickerList" class="stickers"></ul>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <small>מוכן לשימוש גם בלי אינטרנט (PWA). נוצר לשימוש חינוכי.</small>
+  </footer>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
