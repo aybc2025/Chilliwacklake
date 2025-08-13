@@ -19,7 +19,7 @@
   <main>
     <nav class="tabs" role="tablist" aria-label="תפריט תוכן">
       <button role="tab" aria-selected="true" class="tab active" data-tab="home">דף הבית</button>
-      <button role="tab" class="tab" data-tab="loops">לולאות & חוף</button>
+      <button role="tab" class="tab" data-tab="map">מפה</button>
       <button role="tab" class="tab" data-tab="pack">משחק אריזה</button>
       <button role="tab" class="tab" data-tab="quiz">חידון בטיחות</button>
       <button role="tab" class="tab" data-tab="weather">מזג-אוויר & רוח</button>
@@ -30,12 +30,12 @@
     <section id="home" class="panel show">
       <div class="card hero">
         <h2>ברוכים הבאים! 🌲🏕️</h2>
-        <p>זהו אתר משחקים ומידע בעברית לילדים על פארק Sx̱ótsaqel / Chilliwack Lake.</p>
+        <p>בחרנו ב<strong>ראדיום לופ</strong> לקמפינג – שקט, עצים ופרטיות. באתר תלמדו על הבטיחות והכיף בפארק.</p>
         <ul class="bullets">
-          <li>נלמד איפה כדאי לישון – <strong>פלורה? ראדיום? פלייפייס?</strong></li>
-          <li>נשחק <strong>משחק אריזה</strong> – מה חשוב להביא?</li>
-          <li>נעשה <strong>חידון בטיחות</strong> קצר</li>
-          <li>ונחקור איך <strong>הרוח משתנה במשך היום</strong> ⛵</li>
+          <li>מפה אינטראקטיבית – איפה החוף, השיגור וה־sani-station</li>
+          <li><strong>משחק אריזה</strong> מותאם לנייד</li>
+          <li><strong>חידון בטיחות</strong> (10 שאלות)</li>
+          <li>הבנת <strong>רוחות אחר הצהריים</strong> ⛵</li>
         </ul>
         <p class="note">אין קליטה סלולרית בפארק – מתכוננים מראש 🙂</p>
       </div>
@@ -46,15 +46,78 @@
       </div>
     </section>
 
-    <section id="loops" class="panel">
-      <h2>היכרות עם הלולאות 🗺️</h2>
-      <div id="loopsGrid" class="grid"></div>
-      <details class="hint"><summary>טיפ להורים</summary>פלייפייס קרובה לחוף אך עמוסה; פלורה/ראדיום שקטות ופרטיות יותר; לינדמן/גרינדרופ קרובות למגרש המשחקים.</details>
+    <section id="map" class="panel">
+      <h2>🗺️ מפה אינטראקטיבית – Radium Loop</h2>
+      <p>הקישו על הסמלים כדי ללמוד על המקום שלנו: חוף, שיגור סירות, מגרש משחקים, שירותים/ברזיות ו־sani-station.</p>
+      <div class="map-wrap">
+        <svg id="campSVG" viewBox="0 0 800 500" class="map-svg" aria-label="מפת פארק צ׳יליווק">
+          <!-- Lake -->
+          <rect x="10" y="50" width="280" height="400" rx="10" ry="10" fill="#60a5fa" opacity="0.9"></rect>
+          <text x="30" y="80" font-size="18" fill="#0f172a">אגם צ׳יליווק</text>
+
+          <!-- Beach zone -->
+          <rect x="290" y="300" width="60" height="80" fill="#fde68a" rx="6"></rect>
+          <g class="hotspot" data-info="חוף רחצה – מים קרים, בלי מציל. נכנסים קרוב לחוף ובזהירות ברוח.">
+            <circle cx="320" cy="340" r="16" fill="#f59e0b"></circle>
+            <text x="312" y="344" font-size="16">🏖️</text>
+          </g>
+
+          <!-- Boat launch -->
+          <g class="hotspot" data-info="שיגור סירות – עד ~20 פיט. ליד החוף. 'איטיות מתה' ליד השיגור.">
+            <rect x="290" y="385" width="60" height="12" fill="#6b7280"></rect>
+            <text x="300" y="380" font-size="16">🛶</text>
+          </g>
+
+          <!-- Day-use field -->
+          <rect x="360" y="280" width="120" height="120" fill="#bbf7d0" rx="10"></rect>
+          <text x="370" y="300" font-size="14">אזור יום-יום</text>
+
+          <!-- Playground -->
+          <g class="hotspot" data-info="מגרש משחקים – מקום מצוין לפני שקיעה.">
+            <circle cx="420" cy="340" r="14" fill="#86efac"></circle>
+            <text x="412" y="344" font-size="16">⚽</text>
+          </g>
+
+          <!-- Road frame -->
+          <path d="M 480 60 L 760 60 L 760 440 L 500 440" stroke="#9ca3af" stroke-width="10" fill="none" stroke-linecap="round"></path>
+
+          <!-- Radium loop -->
+          <g id="radiumLoop">
+            <circle cx="620" cy="200" r="95" fill="#e0f2fe" stroke="#3b82f6" stroke-width="4"></circle>
+            <text x="565" y="205" font-size="16" fill="#0f172a">Radium Loop</text>
+
+            <!-- Our campsite -->
+            <g class="hotspot" data-info="האתר שלנו – ראדיום לופ. שקט, עצים ופרטיות 🙂">
+              <circle cx="680" cy="160" r="12" fill="#fde68a" stroke="#f59e0b" stroke-width="3"></circle>
+              <text x="672" y="164" font-size="14">⭐</text>
+            </g>
+
+            <!-- Pit toilets -->
+            <g class="hotspot" data-info="שירותי בור">
+              <rect x="560" y="150" width="16" height="16" fill="#94a3b8"></rect>
+              <text x="556" y="146" font-size="14">🚻</text>
+            </g>
+
+            <!-- Water tap -->
+            <g class="hotspot" data-info="ברזיית מי שתייה">
+              <rect x="600" y="250" width="16" height="16" fill="#93c5fd"></rect>
+              <text x="598" y="246" font-size="14">🚰</text>
+            </g>
+          </g>
+
+          <!-- Sani-station -->
+          <g class="hotspot" data-info="Sani-station – ריקון/מילוי (בתשלום).">
+            <rect x="520" y="80" width="24" height="16" fill="#94a3b8"></rect>
+            <text x="548" y="92" font-size="14">🧰</text>
+          </g>
+        </svg>
+        <div id="mapTip" class="map-tip" role="dialog" aria-live="polite" hidden></div>
+      </div>
     </section>
 
     <section id="pack" class="panel">
       <h2>🎒 משחק אריזה</h2>
-      <p>לחצו או גררו פריטים אל ה<span class="droplabel">תיק</span>. דברים טובים = נקודות, דברים לא מתאימים = מינוס!</p>
+      <p>לחצו <strong>(בנייד)</strong> או גררו <strong>(במחשב)</strong> פריטים אל ה<span class="droplabel">תיק</span>. דברים טובים = נקודות, דברים לא מתאימים = מינוס!</p>
       <div class="pack-wrap">
         <ul id="packItems" class="items" aria-label="פריטים לאריזה"></ul>
         <div id="dropZone" class="drop" aria-label="איזור התיק" tabindex="0">התיק שלי</div>
