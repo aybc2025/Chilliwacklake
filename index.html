@@ -22,8 +22,14 @@
       <button role="tab" class="tab" data-tab="map">מפה אינטראקטיבית</button>
       <button role="tab" class="tab" data-tab="pdfmap">מפת PDF רשמית</button>
       <button role="tab" class="tab" data-tab="agreement">הסכם</button>
+
       <button role="tab" class="tab" data-tab="pack">משחק אריזה</button>
-      <button role="tab" class="tab" data-tab="memory">משחק זיכרון</button>
+      <button role="tab" class="tab" data-tab="safetysort">מה בטוח?</button>
+      <button role="tab" class="tab" data-tab="bingo">בינגו טבע</button>
+      <button role="tab" class="tab" data-tab="comic">קומיקס</button>
+      <button role="tab" class="tab" data-tab="met">מיני-מטאורולוג</button>
+      <button role="tab" class="tab" data-tab="trail">מאתר שבילים</button>
+
       <button role="tab" class="tab" data-tab="quiz">חידון בטיחות</button>
       <button role="tab" class="tab" data-tab="weather">מזג-אוויר & רוח</button>
       <button role="tab" class="tab" data-tab="plan">מתכנן יום</button>
@@ -35,10 +41,9 @@
         <h2>ברוכים הבאים! 🌲🏕️</h2>
         <p>בחרנו ב<strong>ראדיום לופ</strong> לקמפינג – שקט, עצים ופרטיות. באתר תלמדו על הבטיחות והכיף בפארק.</p>
         <ul class="bullets">
-          <li>מפה אינטראקטיבית (ראדיום לופ)</li>
-          <li>מפת PDF רשמית של הפארק</li>
-          <li><strong>משחק אריזה</strong> מותאם לנייד + <strong>משחק זיכרון</strong></li>
-          <li><strong>חידון בטיחות</strong> (10 שאלות)</li>
+          <li>מפה אינטראקטיבית (Radium), ומפת PDF הרשמית</li>
+          <li>משחק אריזה + ״מה בטוח?״ + בינגו + קומיקס + מיני-מטאורולוג + מאתר שבילים</li>
+          <li>חידון בטיחות, מתכנן יום, ומדבקות הישגים</li>
         </ul>
         <p class="note">אין קליטה סלולרית בפארק – מתכוננים מראש 🙂</p>
       </div>
@@ -55,51 +60,40 @@
       <p>הקישו על הסמלים כדי ללמוד: חוף, שיגור סירות, שירותים/ברזיות ו־sani-station.</p>
       <div class="map-wrap">
         <svg id="campSVG" viewBox="0 0 800 500" class="map-svg" aria-label="מפת פארק צ׳יליווק">
-          <!-- Lake -->
           <rect x="10" y="50" width="280" height="400" rx="10" ry="10" fill="#60a5fa" opacity="0.9"></rect>
           <text x="30" y="80" font-size="18" fill="#0f172a">אגם צ׳יליווק</text>
-          <!-- Beach -->
           <rect x="290" y="300" width="60" height="80" fill="#fde68a" rx="6"></rect>
           <g class="hotspot" data-info="חוף רחצה – מים קרים, בלי מציל. נכנסים קרוב לחוף ובזהירות ברוח.">
             <circle cx="320" cy="340" r="16" fill="#f59e0b"></circle>
             <text x="312" y="344" font-size="16">🏖️</text>
           </g>
-          <!-- Boat launch -->
           <g class="hotspot" data-info="שיגור סירות – עד ~20 פיט. 'איטיות מתה' ליד השיגור.">
             <rect x="290" y="385" width="60" height="12" fill="#6b7280"></rect>
             <text x="300" y="380" font-size="16">🛶</text>
           </g>
-          <!-- Day-use -->
           <rect x="360" y="280" width="120" height="120" fill="#bbf7d0" rx="10"></rect>
           <text x="370" y="300" font-size="14">אזור יום-יום</text>
-          <!-- Playground -->
           <g class="hotspot" data-info="מגרש משחקים – מקום מצוין לפני שקיעה.">
             <circle cx="420" cy="340" r="14" fill="#86efac"></circle>
             <text x="412" y="344" font-size="16">⚽</text>
           </g>
-          <!-- Road frame -->
           <path d="M 480 60 L 760 60 L 760 440 L 500 440" stroke="#9ca3af" stroke-width="10" fill="none" stroke-linecap="round"></path>
-          <!-- Radium loop -->
           <g id="radiumLoop">
             <circle cx="620" cy="200" r="95" fill="#e0f2fe" stroke="#3b82f6" stroke-width="4"></circle>
             <text x="565" y="205" font-size="16" fill="#0f172a">Radium Loop</text>
-            <!-- Our campsite -->
             <g class="hotspot" data-info="האתר שלנו – ראדיום לופ. שקט, עצים ופרטיות 🙂">
               <circle cx="680" cy="160" r="12" fill="#fde68a" stroke="#f59e0b" stroke-width="3"></circle>
               <text x="672" y="164" font-size="14">⭐</text>
             </g>
-            <!-- Toilets -->
             <g class="hotspot" data-info="שירותי בור">
               <rect x="560" y="150" width="16" height="16" fill="#94a3b8"></rect>
               <text x="556" y="146" font-size="14">🚻</text>
             </g>
-            <!-- Water tap -->
             <g class="hotspot" data-info="ברזיית מי שתייה">
               <rect x="600" y="250" width="16" height="16" fill="#93c5fd"></rect>
               <text x="598" y="246" font-size="14">🚰</text>
             </g>
           </g>
-          <!-- Sani-station -->
           <g class="hotspot" data-info="Sani-station – ריקון/מילוי (בתשלום).">
             <rect x="520" y="80" width="24" height="16" fill="#94a3b8"></rect>
             <text x="548" y="92" font-size="14">🧰</text>
@@ -112,7 +106,6 @@
     <!-- מפת PDF רשמית -->
     <section id="pdfmap" class="panel">
       <h2>🧭 מפת הקמפגראונד הרשמית (PDF)</h2>
-      <p>אפשר להגדיל/לפתוח בחלון חדש אם הטעינה איטית בדפדפן נייד.</p>
       <div class="embed-wrap">
         <object id="pdfObject"
                 data="https://nrs.objectstore.gov.bc.ca/kuwyyf/chilliwack_lake_campground_map_e9d158346e.pdf"
@@ -125,10 +118,10 @@
         href="https://nrs.objectstore.gov.bc.ca/kuwyyf/chilliwack_lake_campground_map_e9d158346e.pdf">פתח/י במלוא המסך</a></p>
     </section>
 
-    <!-- הסכם (NotebookLM) עם נפילה במקרה של חסימת הטמעה -->
+    <!-- הסכם NotebookLM -->
     <section id="agreement" class="panel">
       <h2>📄 ההסכם</h2>
-      <p>ייתכן שיידרש חיבור לחשבון Google והעמוד לא ייטמע בתוך האתר (מדיניות אבטחה). יש קישור ישיר בהמשך.</p>
+      <p>ייתכן שיידרש חשבון Google והעמוד לא ייטמע בתוך האתר (מדיניות אבטחה). יש קישור ישיר בהמשך.</p>
       <div class="embed-wrap">
         <iframe id="agreementFrame"
                 class="embed-frame"
@@ -139,7 +132,7 @@
                 allowfullscreen></iframe>
       </div>
       <div id="agreementFallback" class="embed-fallback" hidden>
-        לא ניתן להטמיע את ההסכם בדפדפן זה. לחצו לפתיחה בחלון חדש:
+        אם ההטמעה חסומה – פתחו בחלון חדש:
         <a class="external" target="_blank" rel="noopener"
           href="https://notebooklm.google.com/notebook/fe560a9c-c128-427c-a0cb-244b8d90f22b?artifactId=3811d581-4a19-4497-83a7-9c9998caf109">פתיחה בהסכם</a>
       </div>
@@ -157,22 +150,78 @@
       <div class="scorebar">נקודות: <span id="score">0</span></div>
     </section>
 
-    <!-- משחק זיכרון -->
-    <section id="memory" class="panel">
-      <h2>🧠 משחק זיכרון – טבע ובטיחות</h2>
-      <p>הפכו קלפים ומצאו זוגות תואמים! אפשר לשחק יחד 🙂</p>
-      <div id="memoryGrid" class="memory-grid" aria-live="polite"></div>
-      <button id="memoryReset" class="primary small">משחק חדש</button>
-      <div id="memoryMsg" class="memory-msg" hidden></div>
+    <!-- מה בטוח? (מיון) -->
+    <section id="safetysort" class="panel">
+      <h2>🛡️ מה בטוח? מה לא?</h2>
+      <p>גררו/הקישו כרטיסים לערימות הנכונות. תקבלו הסבר לכל בחירה.</p>
+      <ul id="safetyItems" class="items"></ul>
+      <div class="sort-wrap">
+        <div class="drop drop-safe" id="safeDrop">✅ בטוח</div>
+        <div class="drop drop-unsafe" id="unsafeDrop">❌ לא בטוח</div>
+      </div>
+      <div id="safetyExplain" class="explain"></div>
+      <div class="scorebar">ניקוד: <span id="safetyScore">0</span></div>
     </section>
 
-    <!-- חידון, מזג־אוויר, מתכנן, מדבקות – ללא שינויי מבנה -->
+    <!-- בינגו טבע -->
+    <section id="bingo" class="panel">
+      <h2>🟩 בינגו טבע</h2>
+      <p>סמנו דברים שמצאתם/עשיתם בטיול. שורה/עמודה/אלכסון = בינגו!</p>
+      <div id="bingoGrid" class="bingo-grid"></div>
+      <button id="bingoReset" class="primary small">לוח חדש</button>
+      <p id="bingoMsg" class="success" hidden>בינגו! הרווחתם מדבקה 🎉</p>
+    </section>
+
+    <!-- קומיקס -->
+    <section id="comic" class="panel">
+      <h2>🖍️ קומיקס מהטיול</h2>
+      <p>גררו או הקישו אייקונים ללוחות וצרו סיפור קטן.</p>
+      <div class="comic-wrap">
+        <div class="sticker-tray" id="comicTray"></div>
+        <div class="comic-panels">
+          <div class="panel-slot" data-slot="0" aria-label="לוח 1">1</div>
+          <div class="panel-slot" data-slot="1" aria-label="לוח 2">2</div>
+          <div class="panel-slot" data-slot="2" aria-label="לוח 3">3</div>
+          <div class="panel-slot" data-slot="3" aria-label="לוח 4">4</div>
+        </div>
+      </div>
+      <div class="btnrow">
+        <button id="comicMake" class="primary">יצירת סיפור</button>
+        <button id="comicClear" class="tab">ניקוי</button>
+      </div>
+      <pre id="comicOut" class="plan-out" aria-live="polite"></pre>
+    </section>
+
+    <!-- מיני-מטאורולוג -->
+    <section id="met" class="panel">
+      <h2>🌤️ מיני-מטאורולוג</h2>
+      <div class="met-grid">
+        <label>רוח: <input id="metWind" type="range" min="0" max="5" value="1"> <span id="metWindVal">1</span></label>
+        <label>טמפרטורה: <input id="metTemp" type="range" min="10" max="32" value="22"> <span id="metTempVal">22°C</span></label>
+        <label>שעה: <input id="metHour" type="range" min="6" max="20" value="10"> <span id="metHourVal">10:00</span></label>
+      </div>
+      <div id="metSuggest" class="note"></div>
+      <div class="lake lake-small">
+        <div class="boat" aria-hidden="true">🛶</div>
+        <div class="waves"></div>
+      </div>
+    </section>
+
+    <!-- מאתר שבילים -->
+    <section id="trail" class="panel">
+      <h2>🥾 מאתר שבילים</h2>
+      <div id="trailBox" class="quiz"></div>
+      <button id="trailNext" class="primary">שאלה הבאה</button>
+    </section>
+
+    <!-- חידון -->
     <section id="quiz" class="panel">
       <h2>❓ חידון בטיחות</h2>
       <div id="quizBox" class="quiz"></div>
       <button id="nextQ" class="primary">שאלה הבאה</button>
     </section>
 
+    <!-- מזג-אוויר -->
     <section id="weather" class="panel">
       <h2>🌤️ איך הרוח משתנה?</h2>
       <p>גררו את השעות וראו איך ה״גלים״ משתנים. <strong>אחר הצהריים</strong> לרוב יש יותר רוח.</p>
@@ -183,9 +232,9 @@
       </div>
     </section>
 
+    <!-- מתכנן -->
     <section id="plan" class="panel">
       <h2>📅 מתכנן יום קצר</h2>
-      <p>בחרו פעילות לבוקר, צהריים וערב. בסוף תקבלו <strong>תוכנית יום</strong> ידידותית לילדים.</p>
       <div class="plan-grid">
         <div>
           <h3>בוקר</h3>
@@ -216,6 +265,7 @@
       <pre id="planOut" class="plan-out" aria-live="polite"></pre>
     </section>
 
+    <!-- מדבקות -->
     <section id="stickers" class="panel">
       <h2>🏅 מדבקות הישגים</h2>
       <p>הרוויחו מדבקות בלמידה ובמשחקים. ההתקדמות נשמרת במכשיר.</p>
