@@ -1,4 +1,4 @@
-const CACHE = 'chilliwack-kids-v1';
+const CACHE = 'chilliwack-kids-v1-1';
 const ASSETS = [
   './',
   './index.html',

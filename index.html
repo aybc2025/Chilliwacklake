@@ -22,7 +22,7 @@
       <button role="tab" class="tab" data-tab="loops">לולאות & חוף</button>
       <button role="tab" class="tab" data-tab="pack">משחק אריזה</button>
       <button role="tab" class="tab" data-tab="quiz">חידון בטיחות</button>
-      <button role="tab" class="tab" data-tab="weather">מזג‑אוויר & רוח</button>
+      <button role="tab" class="tab" data-tab="weather">מזג-אוויר & רוח</button>
       <button role="tab" class="tab" data-tab="plan">מתכנן יום</button>
       <button role="tab" class="tab" data-tab="stickers">מדבקות</button>
     </nav>
@@ -54,9 +54,9 @@
 
     <section id="pack" class="panel">
       <h2>🎒 משחק אריזה</h2>
-      <p>גררו פריטים אל ה<span class="droplabel">תיק</span>. דברים טובים = נקודות, דברים לא מתאימים = מינוס!</p>
+      <p>לחצו או גררו פריטים אל ה<span class="droplabel">תיק</span>. דברים טובים = נקודות, דברים לא מתאימים = מינוס!</p>
       <div class="pack-wrap">
-        <ul id="packItems" class="items" aria-label="פריטים לגרירה"></ul>
+        <ul id="packItems" class="items" aria-label="פריטים לאריזה"></ul>
         <div id="dropZone" class="drop" aria-label="איזור התיק" tabindex="0">התיק שלי</div>
       </div>
       <div class="scorebar">נקודות: <span id="score">0</span></div>
@@ -114,6 +114,7 @@
     <section id="stickers" class="panel">
       <h2>🏅 מדבקות הישגים</h2>
       <p>הרוויחו מדבקות בלמידה ובמשחקים. ההתקדמות נשמרת במכשיר.</p>
+      <div style="margin:6px 0;"><button id="resetBtn" class="tab">איפוס התקדמות</button></div>
       <ul id="stickerList" class="stickers"></ul>
     </section>
   </main>

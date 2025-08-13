@@ -21,7 +21,7 @@ main{padding:12px}
 .hint{margin-top:10px}
 .pack-wrap{display:grid;grid-template-columns:2fr 1fr;gap:10px}
 .items{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
-.items li{background:white;border:1px dashed #94a3b8;border-radius:12px;padding:8px;text-align:center;cursor:grab}
+.items li{background:white;border:1px dashed #94a3b8;border-radius:12px;padding:8px;text-align:center;cursor:pointer}
 .drop{background:#fef9c3;border:2px dashed #f59e0b;border-radius:16px;display:flex;align-items:center;justify-content:center;min-height:180px;font-weight:700}
 .drop.ok{background:#dcfce7;border-color:#22c55e}
 .scorebar{margin-top:10px;font-weight:700}

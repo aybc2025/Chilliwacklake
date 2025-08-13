@@ -1,3 +1,14 @@
+// --- App versioned storage ---
+const APP_VERSION = '1.1';
+try {
+  const storedV = localStorage.getItem('appVersion');
+  if (storedV !== APP_VERSION) {
+    localStorage.removeItem('achievements');
+    localStorage.removeItem('seenPanels');
+    localStorage.setItem('appVersion', APP_VERSION);
+  }
+} catch {}
+
 // PWA install prompt
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
@@ -64,11 +75,10 @@ function renderLoops(){
   `).join('');
 }
 
-// Pack game
+// Pack game (drag or click)
 let score = 0;
 function setupPackGame(){
   const items = [...DATA.packing.yes.map(x => ({name:x, good:true})), ...DATA.packing.no.map(x => ({name:x, good:false}))];
-  // shuffle
   for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
   const ul = document.getElementById('packItems');
   ul.innerHTML = items.map((it,idx)=> `<li draggable="true" data-good="${it.good}" id="it-${idx}">${it.good?'🟢':'🔴'} ${it.name}</li>`).join('');
@@ -90,7 +100,17 @@ function setupPackGame(){
     }
   });
   document.querySelectorAll('#packItems li').forEach(li => {
-    li.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', li.id));
+    li.addEventListener('dragstart', e => { try { e.dataTransfer.setData('text/plain', li.id); } catch{} });
+    // Click to pack (mobile-friendly)
+    li.addEventListener('click', () => {
+      const good = li.dataset.good === 'true';
+      score += good ? 10 : -5;
+      document.getElementById('score').textContent = score;
+      li.remove();
+      if (good && document.querySelectorAll('#packItems li[data-good="true"]').length === 0) {
+        unlock('packer');
+      }
+    });
   });
 }
 
@@ -139,8 +159,7 @@ function setupWeather(){
   function upd(){
     const h = Number(slider.value);
     timeVal.textContent = `${h.toString().padStart(2,'0')}:00`;
-    // More wind 14-18
-    const wind = Math.max(0, Math.min(1, (h - 12) / 6)); // 0 at 12:00, ~1 by 18:00
+    const wind = Math.max(0, Math.min(1, (h - 12) / 6));
     waves.style.height = `${40 + wind*40}px`;
     waves.style.opacity = `${0.6 + wind*0.4}`;
     boat.style.top = `${20 + wind*10}px`;
@@ -178,14 +197,22 @@ function unlock(id){
     have.push(id);
     localStorage.setItem('achievements', JSON.stringify(have));
     renderStickers();
-    maybeUnlockExplorer();
   }
 }
 function maybeUnlockExplorer(){
-  // Explorer unlock when user visited at least 5 panels (simple heuristic)
   const activeId = document.querySelector('.panel.show')?.id;
   const seen = new Set(JSON.parse(localStorage.getItem('seenPanels')||'[]'));
-  if (activeId) { seen.add(activeId); }
+  const contentPanels = new Set(['home','loops','pack','quiz','weather','plan']);
+  if (activeId && contentPanels.has(activeId)) { seen.add(activeId); }
   localStorage.setItem('seenPanels', JSON.stringify([...seen]));
-  if (seen.size >= 5) unlock('explorer');
+  if ([...seen].filter(id => contentPanels.has(id)).length >= 5) unlock('explorer');
 }
+
+// Reset achievements button
+const resetBtn = document.getElementById('resetBtn');
+resetBtn?.addEventListener('click', () => {
+  localStorage.removeItem('achievements');
+  localStorage.removeItem('seenPanels');
+  renderStickers();
+  alert('התקדמות אופסה במכשיר זה.');
+});
