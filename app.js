@@ -1,5 +1,5 @@
 // --- App versioned storage ---
-const APP_VERSION = '1.2';
+const APP_VERSION = '1.3';
 try {
   const storedV = localStorage.getItem('appVersion');
   if (storedV !== APP_VERSION) {
@@ -41,6 +41,8 @@ tabs.forEach(t => t.addEventListener('click', () => {
   t.classList.add('active');
   document.getElementById(t.dataset.tab).classList.add('show');
   maybeUnlockExplorer();
+  // Lazy-load external embeds when their tab is opened:
+  if (t.dataset.tab === 'agreement') setupAgreementEmbed();
 }));
 
 // Load data
@@ -51,11 +53,13 @@ fetch('./data/park.json')
    DATA = d;
    renderFacts();
    setupPackGame();
+   setupMemoryGame();
    setupQuiz();
    setupWeather();
    setupPlan();
    renderStickers();
    setupMap();
+   setupPdfEmbed();
  });
 
 // Facts
@@ -64,7 +68,7 @@ function renderFacts(){
   ul.innerHTML = DATA.facts.map(f => `<li>✅ ${f}</li>`).join('');
 }
 
-// Pack game (mobile-first: tap; desktop: drag or tap)
+// ---------- PACK GAME (mobile-first tap; desktop drag/tap) ----------
 let score = 0;
 const isTouch = window.matchMedia('(pointer: coarse)').matches;
 function setupPackGame(){
@@ -93,12 +97,13 @@ function setupPackGame(){
     drop.classList.remove('ok');
   });
 
-  // Bind each item
+  // Bind each item (tap/click)
   document.querySelectorAll('#packItems li').forEach(li => {
     li.addEventListener('dragstart', e => { try { e.dataTransfer.setData('text/plain', li.id); } catch{} });
     const packIt = () => handlePack(li);
     li.addEventListener('click', packIt, {passive:true});
     li.addEventListener('touchstart', packIt, {passive:true});
+    li.addEventListener('pointerdown', e => { if (isTouch) packIt(); }, {passive:true});
   });
 }
 function handlePack(li){
@@ -111,7 +116,74 @@ function handlePack(li){
   }
 }
 
-// Quiz
+// ---------- MEMORY GAME ----------
+function setupMemoryGame(){
+  const grid = document.getElementById('memoryGrid');
+  const reset = document.getElementById('memoryReset');
+  const msg = document.getElementById('memoryMsg');
+  if (!grid) return;
+
+  const icons = ['🌲','🦉','🐻','🛶','🏖️','🚰','🚻','🧭'];
+  let cards, first, lock, matches;
+
+  function init(){
+    msg.hidden = true;
+    const deck = [...icons, ...icons]; // pairs
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    matches = 0; lock = false; first = null;
+    grid.innerHTML = deck.map((ic,idx)=>`
+      <button class="card" data-i="${idx}" aria-label="קלף" aria-pressed="false">
+        <span class="front">❓</span>
+        <span class="back" aria-hidden="true">${ic}</span>
+      </button>
+    `).join('');
+    grid.querySelectorAll('.card').forEach((btn, i) => {
+      btn.addEventListener('click', () => flip(btn, deck[i]));
+      btn.addEventListener('touchstart', () => flip(btn, deck[i]), {passive:true});
+    });
+  }
+
+  function flip(btn, icon){
+    if (lock || btn.classList.contains('show')) return;
+    btn.classList.add('show');
+    btn.setAttribute('aria-pressed','true');
+    if (!first){
+      first = {btn, icon};
+    } else {
+      lock = true;
+      if (first.icon === icon){
+        // match
+        setTimeout(()=>{ 
+          first.btn.classList.add('done'); 
+          btn.classList.add('done'); 
+          lock = false; first = null; 
+          matches++;
+          if (matches === 8){
+            msg.textContent = 'כל הכבוד! השלמתם את כל הזוגות 🎉';
+            msg.hidden = false;
+          }
+        }, 250);
+      } else {
+        // no match
+        setTimeout(()=>{
+          first.btn.classList.remove('show');
+          first.btn.setAttribute('aria-pressed','false');
+          btn.classList.remove('show');
+          btn.setAttribute('aria-pressed','false');
+          lock = false; first = null;
+        }, 600);
+      }
+    }
+  }
+
+  reset.addEventListener('click', init);
+  init();
+}
+
+// ---------- QUIZ ----------
 let qIndex = 0;
 function setupQuiz(){
   qIndex = 0;
@@ -147,7 +219,7 @@ function nextQ(){
   }
 }
 
-// Weather slider
+// ---------- WEATHER ----------
 function setupWeather(){
   const slider = document.getElementById('timeSlider');
   const timeVal = document.getElementById('timeVal');
@@ -156,7 +228,6 @@ function setupWeather(){
   function upd(){
     const h = Number(slider.value);
     timeVal.textContent = `${h.toString().padStart(2,'0')}:00`;
-    // More wind ~14–18
     const wind = Math.max(0, Math.min(1, (h - 12) / 6));
     waves.style.height = `${40 + wind*40}px`;
     waves.style.opacity = `${0.6 + wind*0.4}`;
@@ -166,7 +237,7 @@ function setupWeather(){
   upd();
 }
 
-// Day planner
+// ---------- PLANNER ----------
 function setupPlan(){
   document.getElementById('makePlan').addEventListener('click', ()=>{
     const m = document.getElementById('morning').value;
@@ -177,11 +248,11 @@ function setupPlan(){
   });
 }
 
-// Stickers (achievements)
+// ---------- STICKERS ----------
 function renderStickers(){
   const ul = document.getElementById('stickerList');
   const have = getAch();
-  ul.innerHTML = DATA.achievements.map(a=>{
+  ul.innerHTML = (DATA.achievements||[]).map(a=>{
     const got = have.includes(a.id);
     return `<li><span>${got?'🏆':'🔒'}</span><div><strong>${a.name}</strong><div>${a.desc}</div></div></li>`;
   }).join('');
@@ -200,7 +271,7 @@ function unlock(id){
 function maybeUnlockExplorer(){
   const activeId = document.querySelector('.panel.show')?.id;
   const seen = new Set(JSON.parse(localStorage.getItem('seenPanels')||'[]'));
-  const contentPanels = new Set(['home','map','pack','quiz','weather','plan']);
+  const contentPanels = new Set(['home','map','pdfmap','agreement','pack','memory','quiz','weather','plan']);
   if (activeId && contentPanels.has(activeId)) { seen.add(activeId); }
   localStorage.setItem('seenPanels', JSON.stringify([...seen]));
   if ([...seen].filter(id => contentPanels.has(id)).length >= 5) unlock('explorer');
@@ -215,7 +286,7 @@ resetBtn?.addEventListener('click', () => {
   alert('התקדמות אופסה במכשיר זה.');
 });
 
-// Interactive map
+// ---------- INTERACTIVE MAP ----------
 function setupMap(){
   const svg = document.getElementById('campSVG');
   const tip = document.getElementById('mapTip');
@@ -232,4 +303,32 @@ function setupMap(){
     h.setAttribute('tabindex','0');
     h.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showTip(txt); }});
   });
+}
+
+// ---------- PDF EMBED ----------
+function setupPdfEmbed(){
+  // nothing special required – <object> is already in DOM; keep for symmetry/future hooks
+}
+
+// ---------- AGREEMENT EMBED (with graceful fallback) ----------
+function setupAgreementEmbed(){
+  const btn = document.getElementById('loadAgreement');
+  const frame = document.getElementById('agreementFrame');
+  const fallback = document.getElementById('agreementFallback');
+  if (!btn || !frame) return;
+  const src = frame.getAttribute('data-src');
+  const tryLoad = () => {
+    frame.src = src;
+    // If blocked by X-Frame-Options/CSP, let user use the link:
+    // We can't detect reliably across origins; show fallback after short delay if still blank-height.
+    setTimeout(()=>{
+      try {
+        // Accessing contentWindow may throw on cross-origin; catch and still show fallback link.
+        // We show fallback UI regardless so the user always has a path.
+        fallback.hidden = false;
+      } catch { fallback.hidden = false; }
+    }, 1200);
+    btn.disabled = true;
+  };
+  btn.addEventListener('click', tryLoad, {once:true});
 }
