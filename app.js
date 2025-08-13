@@ -1,5 +1,5 @@
 // --- App versioned storage ---
-const APP_VERSION = '1.1';
+const APP_VERSION = '1.2';
 try {
   const storedV = localStorage.getItem('appVersion');
   if (storedV !== APP_VERSION) {
@@ -50,12 +50,12 @@ fetch('./data/park.json')
  .then(d => {
    DATA = d;
    renderFacts();
-   renderLoops();
    setupPackGame();
    setupQuiz();
    setupWeather();
    setupPlan();
    renderStickers();
+   setupMap();
  });
 
 // Facts
@@ -64,25 +64,24 @@ function renderFacts(){
   ul.innerHTML = DATA.facts.map(f => `<li>✅ ${f}</li>`).join('');
 }
 
-// Loops grid
-function renderLoops(){
-  const grid = document.getElementById('loopsGrid');
-  grid.innerHTML = DATA.loops.map(l => `
-    <article class="loop">
-      <h4>${l.emoji} ${l.name}</h4>
-      <p>${l.blurb}</p>
-    </article>
-  `).join('');
-}
-
-// Pack game (drag or click)
+// Pack game (mobile-first: tap; desktop: drag or tap)
 let score = 0;
+const isTouch = window.matchMedia('(pointer: coarse)').matches;
 function setupPackGame(){
-  const items = [...DATA.packing.yes.map(x => ({name:x, good:true})), ...DATA.packing.no.map(x => ({name:x, good:false}))];
-  for (let i = items.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
+  const items = [
+    ...DATA.packing.yes.map(x => ({name:x, good:true})),
+    ...DATA.packing.no.map(x => ({name:x, good:false}))
+  ];
+  // shuffle
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
   const ul = document.getElementById('packItems');
-  ul.innerHTML = items.map((it,idx)=> `<li draggable="true" data-good="${it.good}" id="it-${idx}">${it.good?'🟢':'🔴'} ${it.name}</li>`).join('');
+  ul.innerHTML = items.map((it,idx)=> `<li ${isTouch?'':'draggable="true"'} data-good="${it.good}" id="it-${idx}">${it.good?'🟢':'🔴'} ${it.name}</li>`).join('');
   const drop = document.getElementById('dropZone');
+
+  // Desktop drag/drop
   drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('ok'); });
   drop.addEventListener('dragleave', ()=> drop.classList.remove('ok'));
   drop.addEventListener('drop', e => {
@@ -90,28 +89,26 @@ function setupPackGame(){
     const id = e.dataTransfer.getData('text/plain');
     const li = document.getElementById(id);
     if (!li) return;
-    const good = li.dataset.good === 'true';
-    score += good ? 10 : -5;
-    document.getElementById('score').textContent = score;
-    li.remove();
+    handlePack(li);
     drop.classList.remove('ok');
-    if (good && document.querySelectorAll('#packItems li[data-good="true"]').length === 0) {
-      unlock('packer');
-    }
   });
+
+  // Bind each item
   document.querySelectorAll('#packItems li').forEach(li => {
     li.addEventListener('dragstart', e => { try { e.dataTransfer.setData('text/plain', li.id); } catch{} });
-    // Click to pack (mobile-friendly)
-    li.addEventListener('click', () => {
-      const good = li.dataset.good === 'true';
-      score += good ? 10 : -5;
-      document.getElementById('score').textContent = score;
-      li.remove();
-      if (good && document.querySelectorAll('#packItems li[data-good="true"]').length === 0) {
-        unlock('packer');
-      }
-    });
+    const packIt = () => handlePack(li);
+    li.addEventListener('click', packIt, {passive:true});
+    li.addEventListener('touchstart', packIt, {passive:true});
   });
+}
+function handlePack(li){
+  const good = li.dataset.good === 'true';
+  score += good ? 10 : -5;
+  document.getElementById('score').textContent = score;
+  li.remove();
+  if (good && document.querySelectorAll('#packItems li[data-good="true"]').length === 0) {
+    unlock('packer');
+  }
 }
 
 // Quiz
@@ -159,6 +156,7 @@ function setupWeather(){
   function upd(){
     const h = Number(slider.value);
     timeVal.textContent = `${h.toString().padStart(2,'0')}:00`;
+    // More wind ~14–18
     const wind = Math.max(0, Math.min(1, (h - 12) / 6));
     waves.style.height = `${40 + wind*40}px`;
     waves.style.opacity = `${0.6 + wind*0.4}`;
@@ -202,7 +200,7 @@ function unlock(id){
 function maybeUnlockExplorer(){
   const activeId = document.querySelector('.panel.show')?.id;
   const seen = new Set(JSON.parse(localStorage.getItem('seenPanels')||'[]'));
-  const contentPanels = new Set(['home','loops','pack','quiz','weather','plan']);
+  const contentPanels = new Set(['home','map','pack','quiz','weather','plan']);
   if (activeId && contentPanels.has(activeId)) { seen.add(activeId); }
   localStorage.setItem('seenPanels', JSON.stringify([...seen]));
   if ([...seen].filter(id => contentPanels.has(id)).length >= 5) unlock('explorer');
@@ -216,3 +214,22 @@ resetBtn?.addEventListener('click', () => {
   renderStickers();
   alert('התקדמות אופסה במכשיר זה.');
 });
+
+// Interactive map
+function setupMap(){
+  const svg = document.getElementById('campSVG');
+  const tip = document.getElementById('mapTip');
+  if (!svg || !tip) return;
+  function showTip(txt){
+    tip.textContent = txt;
+    tip.hidden = false;
+  }
+  svg.querySelectorAll('.hotspot').forEach(h => {
+    const txt = h.dataset.info || '';
+    const handler = () => showTip(txt);
+    h.addEventListener('click', handler, {passive:true});
+    h.addEventListener('touchstart', handler, {passive:true});
+    h.setAttribute('tabindex','0');
+    h.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showTip(txt); }});
+  });
+}
