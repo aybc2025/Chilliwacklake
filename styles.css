@@ -56,3 +56,26 @@ main{padding:12px}
 @media (max-width:720px){
   .pack-wrap{grid-template-columns:1fr}
 }
+
+/* הטמעות/מסמכים */
+.embed-wrap{background:white;border-radius:16px;padding:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:12px}
+.embed-frame{width:100%;height:70vh;border:none;border-radius:12px}
+.embed-fallback{background:#0f172a;color:#e2e8f0;padding:10px;border-radius:12px}
+
+/* מפה אינטראקטיבית (כבר קיימת) */
+.map-wrap{background:white;border-radius:16px;padding:10px;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-bottom:12px}
+.map-svg{width:100%;height:auto;display:block;touch-action:manipulation}
+.hotspot{cursor:pointer}
+.map-tip{position:relative;margin-top:8px;background:#0f172a;color:#e2e8f0;padding:10px;border-radius:12px;min-height:38px}
+
+/* משחק זיכרון */
+.memory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:10px;margin:10px 0}
+.card{position:relative;appearance:none;border:none;background:#e2e8f0;border-radius:12px;height:70px;cursor:pointer;font-size:28px;display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.card .front{pointer-events:none}
+.card .back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
+.card.show{background:#dcfce7;transform:scale(0.98)}
+.card.show .back{opacity:1}
+.card.done{background:#bbf7d0}
+
+/* התאמות משחק אריזה לנייד */
+.items li{min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer}
